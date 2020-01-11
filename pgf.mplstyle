@@ -1,0 +1,19 @@
+text.usetex: True    # use inline math for ticks
+font.family: "serif" # use serif/main font for text elements
+font.size: 8
+lines.markersize: 4
+axes.labelsize: 8
+axes.grid:  True
+# Make the legend/label fonts a little smaller
+legend.fontsize: 8
+xtick.labelsize: 8
+ytick.labelsize: 8
+
+figure.figsize: 3.3914487339144874, 2.0960305886619515 
+figure.dpi : 300
+savefig.dpi : 300
+savefig.pad_inches: 0
+
+pgf.rcfonts: False   # don't setup fonts from rc parameters
+pgf.preamble: [ "\\usepackage{siunitx}","\\usepackage{amsmath}","\\usepackage{metalogo}","\\usepackage{unicode-math}","\setmathfont{xits-math.otf}","\setmainfont{DejaVu Serif}" ]
+
