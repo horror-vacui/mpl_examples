@@ -17,6 +17,7 @@ df_avg = pd.read_csv("/mnt/home/documents/Measurements/MPW2221_TSPC_div/sim/etsp
 #####################################################################################################################################
 # plotting setup
 # color and linestyle definition
+matplotlib.rcParams['lines.markersize'] = 3
 d_plot = {
         'A' : ("^",'#1b9e77'),
         'B' : ("v",'#d95f02'),
@@ -65,12 +66,12 @@ ax.grid(which='major', alpha=0.5)
 ax.grid(which='minor', alpha=0.2)
 
 fig2, ax2 = plt.subplots(1,1,sharex=True, figsize=(s[0],s[1]))
-ax2.plot(df_avg['vclk_dc'],df_avg['A0'],  linestyle=d_bb.get((0,0)),  marker=d_plot.get('A')[0],  markersize = 3 ,color=d_plot.get('A')[1] )   
-ax2.plot(df_avg['vclk_dc'],df_avg['B0'],  linestyle=d_bb.get((0,0)),  marker=d_plot.get('B')[0] , markersize = 3 ,color=d_plot.get('B')[1] )    
-ax2.plot(df_avg['vclk_dc'],df_avg['FB0'], linestyle=d_bb.get((0,0)),  marker=d_plot.get('FB')[0], markersize = 3 ,color=d_plot.get('FB')[1])    
-ax2.plot(df_avg['vclk_dc'],df_avg['A3'],  linestyle=d_bb.get((3,-1)), marker=d_plot.get('A')[0] , markersize = 3 ,color=d_plot.get('A')[1] )    
-ax2.plot(df_avg['vclk_dc'],df_avg['B3'],  linestyle=d_bb.get((3,-1)), marker=d_plot.get('B')[0] , markersize = 3 ,color=d_plot.get('B')[1] )    
-ax2.plot(df_avg['vclk_dc'],df_avg['FB3'], linestyle=d_bb.get((3,-1)), marker=d_plot.get('FB')[0], markersize = 3 ,color=d_plot.get('FB')[1])    
+ax2.plot(df_avg['vclk_dc'],df_avg['A0'],  linestyle=d_bb.get((0,0)),  marker=d_plot.get('A')[0],  color=d_plot.get('A')[1] )   
+ax2.plot(df_avg['vclk_dc'],df_avg['B0'],  linestyle=d_bb.get((0,0)),  marker=d_plot.get('B')[0] , color=d_plot.get('B')[1] )    
+ax2.plot(df_avg['vclk_dc'],df_avg['FB0'], linestyle=d_bb.get((0,0)),  marker=d_plot.get('FB')[0], color=d_plot.get('FB')[1])    
+ax2.plot(df_avg['vclk_dc'],df_avg['A3'],  linestyle=d_bb.get((3,-1)), marker=d_plot.get('A')[0] , color=d_plot.get('A')[1] )    
+ax2.plot(df_avg['vclk_dc'],df_avg['B3'],  linestyle=d_bb.get((3,-1)), marker=d_plot.get('B')[0] , color=d_plot.get('B')[1] )    
+ax2.plot(df_avg['vclk_dc'],df_avg['FB3'], linestyle=d_bb.get((3,-1)), marker=d_plot.get('FB')[0], color=d_plot.get('FB')[1])    
 
 # Adding a subtle reference line
 xlim = ax2.get_xlim()
