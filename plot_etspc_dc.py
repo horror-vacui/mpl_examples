@@ -85,14 +85,14 @@ backbias_handle.append(matplotlib.lines.Line2D([],[], color="black", linestyle=d
 backbias_handle.append(matplotlib.lines.Line2D([],[], color="black", linestyle=d_bb.get((3,-1)), label="3V -1V"))
 
 node_handle = []
-node_handle.append(matplotlib.lines.Line2D([],[], marker=d_plot.get('A')[0], color=d_plot.get('A')[1], linestyle="-", label="A"))
-node_handle.append(matplotlib.lines.Line2D([],[], marker=d_plot.get('B')[0], color=d_plot.get('B')[1], linestyle="-", label="B"))
-node_handle.append(matplotlib.lines.Line2D([],[], marker=d_plot.get('FB')[0], color=d_plot.get('FB')[1], linestyle="-", label="FB"))
+for n in ('A', 'B', 'FB'):
+    node_handle.append(matplotlib.lines.Line2D([],[], marker=d_plot.get(n)[0], color=d_plot.get(n)[1], linestyle="-", label=n))
 
-ax.annotate(r"V\textsubscript{BN} V\textsubscript{BP}:",xy=(-0.1,1.08),xycoords="axes fraction",fontsize=7)
+ax.annotate( r"V\textsubscript{BN} V\textsubscript{BP}:",
+        xy=(-0.1,1.08), xycoords="axes fraction", fontsize=7)
 leg_bb = ax.legend(handles = backbias_handle, frameon=False, fontsize=7, handletextpad=0.4, bbox_to_anchor=(0.24,0.98,0.86,0.04), borderaxespad=0, ncol=2, loc='lower center', mode="expand", handlelength=1)
-
-ax2.annotate(r"Nodes: ",xy=(-0.17,1.06),xycoords="axes fraction",fontsize=7)
+ax2.annotate( r"Nodes: ",
+        xy=(-0.17,1.06),xycoords="axes fraction",fontsize=7)
 leg_node = ax2.legend(handles = node_handle, frameon=False, fontsize=7, handletextpad=0.4, bbox_to_anchor=(0.12,0.98,0.9,0.04), borderaxespad=0, ncol=3, loc='lower center', mode="expand", handlelength=1.75)
 
 
@@ -119,7 +119,5 @@ ax2.set_ylim(0.2,0.7)
 # For faster and esier checking how to plot looks like, we save it also into png format.
 # Unfortunately the pgf backend has no interactive mode to see the plot.
 for ext in ["png", "pgf"]:
-    # fig.savefig("etspc_dc.%s" % ext, dpi=fig.dpi, bbox_inches='tight', pad_inches=0)
-    # fig2.savefig("etspc_pss_avg.%s" % ext, dpi=fig.dpi, bbox_inches='tight', pad_inches=0)
     fig.savefig("etspc_dc.%s" % ext, bbox_inches='tight')
     fig2.savefig("etspc_pss_avg.%s" % ext, bbox_inches='tight')
