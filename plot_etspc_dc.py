@@ -17,7 +17,7 @@ df_avg = pd.read_csv("/mnt/home/documents/Measurements/MPW2221_TSPC_div/sim/etsp
 # color and linestyle definition
 matplotlib.rcParams['lines.markersize'] = 3
 matplotlib.use('pgf')
-plt.style.use('/home/tibenszky/.config/matplotlib/pgf.mplstyle')
+plt.style.use('~/.config/matplotlib/pgf.mplstyle')
 matplotlib.rcParams['pgf.preamble'] =  [ # this is a copy-pasted setting I use often. Unfortunately they did not work in mplstyle. :-(
         "\\usepackage{siunitx}",
         "\\usepackage{amsmath}",
