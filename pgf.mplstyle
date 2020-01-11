@@ -15,5 +15,5 @@ savefig.dpi : 300
 savefig.pad_inches: 0
 
 pgf.rcfonts: False   # don't setup fonts from rc parameters
-pgf.preamble: [ "\\usepackage{siunitx}","\\usepackage{amsmath}","\\usepackage{metalogo}","\\usepackage{unicode-math}","\setmathfont{xits-math.otf}","\setmainfont{DejaVu Serif}" ]
+# pgf.preamble: [ "\\usepackage{siunitx}","\\usepackage{amsmath}","\\usepackage{metalogo}","\\usepackage{unicode-math}","\setmathfont{xits-math.otf}","\setmainfont{DejaVu Serif}" ]
 

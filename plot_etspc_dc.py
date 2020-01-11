@@ -5,19 +5,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 
-plt.style.use('/home/tibenszky/.config/matplotlib/pgf.mplstyle')
 
-f_char = 
 df_char = pd.read_csv("/mnt/home/documents/Measurements/MPW2221_TSPC_div/sim/etspc_inv_DC_char.vcsv", 
         header=None, skiprows=6, dtype=float)
 df_avg = pd.read_csv("/mnt/home/documents/Measurements/MPW2221_TSPC_div/sim/etspc_tran_node_avg.vcsv",
-        dtype=float, header=None, skiprows=6), 
+        dtype=float, header=None, skiprows=6, 
         index_col=None, usecols=np.array([-1,0,2,4,6,8,10])+1,names=["vclk_dc","A0","B0","FB0","A3","B3","FB3"])
 
 #####################################################################################################################################
 # plotting setup
 # color and linestyle definition
 matplotlib.rcParams['lines.markersize'] = 3
+matplotlib.use('pgf')
+plt.style.use('/home/tibenszky/.config/matplotlib/pgf.mplstyle')
+matplotlib.rcParams['pgf.preamble'] =  [ # this is a copy-pasted setting I use often. Unfortunately they did not work in mplstyle. :-(
+        "\\usepackage{siunitx}",
+        "\\usepackage{amsmath}",
+        "\\usepackage{metalogo}",
+        "\\usepackage{unicode-math}",
+        "\setmathfont{xits-math.otf}",
+        "\setmainfont{DejaVu Serif}" ]
 d_plot = {
         'A' : ("^",'#1b9e77'),
         'B' : ("v",'#d95f02'),
@@ -66,12 +73,8 @@ ax.grid(which='major', alpha=0.5)
 ax.grid(which='minor', alpha=0.2)
 
 fig2, ax2 = plt.subplots(1,1,sharex=True, figsize=(s[0],s[1]))
-ax2.plot(df_avg['vclk_dc'],df_avg['A0'],  linestyle=d_bb.get((0,0)),  marker=d_plot.get('A')[0],  color=d_plot.get('A')[1] )   
-ax2.plot(df_avg['vclk_dc'],df_avg['B0'],  linestyle=d_bb.get((0,0)),  marker=d_plot.get('B')[0] , color=d_plot.get('B')[1] )    
-ax2.plot(df_avg['vclk_dc'],df_avg['FB0'], linestyle=d_bb.get((0,0)),  marker=d_plot.get('FB')[0], color=d_plot.get('FB')[1])    
-ax2.plot(df_avg['vclk_dc'],df_avg['A3'],  linestyle=d_bb.get((3,-1)), marker=d_plot.get('A')[0] , color=d_plot.get('A')[1] )    
-ax2.plot(df_avg['vclk_dc'],df_avg['B3'],  linestyle=d_bb.get((3,-1)), marker=d_plot.get('B')[0] , color=d_plot.get('B')[1] )    
-ax2.plot(df_avg['vclk_dc'],df_avg['FB3'], linestyle=d_bb.get((3,-1)), marker=d_plot.get('FB')[0], color=d_plot.get('FB')[1])    
+for n in ('A', 'B', 'FB'):
+    ax2.plot(df_avg['vclk_dc'],df_avg[n + '0' ],  linestyle=d_bb.get((0,0)),  marker=d_plot.get(n)[0],  color=d_plot.get(n)[1] )   
 
 # Adding a subtle reference line
 xlim = ax2.get_xlim()
