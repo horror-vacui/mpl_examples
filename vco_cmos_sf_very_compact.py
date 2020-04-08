@@ -15,9 +15,9 @@ do_title    = True
 
 suffix = "cmos_sf"
 
-# meas_dir = "/mnt/home/documents/Measurements/MPW2215_VCO/"
+meas_dir = "/mnt/home/documents/Measurements/MPW2215_VCO/"
 meas_dir = "/home/zoltan/ccn/Measurements/MPW2215_VCO/"
-# sim_dir = "/mnt/home/documents/Measurements/MPW2215_VCO/sim/"
+sim_dir = "/mnt/home/documents/Measurements/MPW2215_VCO/sim/"
 sim_dir = "/home/zoltan/ccn/Measurements/MPW2215_VCO/sim/"
 
 
@@ -36,6 +36,7 @@ legend_style2_ncol2_ul = {"frameon":False, "fontsize":7, "handletextpad":0.4, "b
 l_style_meas = [style_meas1, style_meas2, style_meas3, style_meas4]
 
 plot_style = {"figsize":(3.3914487339144874, 2.0960305886619515*0.85)}
+plot_style_3 = {"figsize":(3.3914487339144874, 2.0960305886619515*0.8*3)}
 
 opt_vcsv = {'header':None, 'skiprows':6, 'dtype':np.float64, 'usecols':[0,1,3,7],'names':['vtune','freq','pout','pdc']} 
 
@@ -89,7 +90,6 @@ if latex:
             r"\DeclareSIUnit{\dBm}{\deci\Bm}",
             r"\sisetup{detect-weight=true, detect-family=true, per-mode=fraction, fraction-function=\tfrac,range-phrase=--, range-units=single}",
             r"\newcommand{\da}{\textsuperscript{$\dagger$}}"
-            # I do not understand why, but lately plots are not created when these commands are used. I was not able to found out the reason.
             # r"\setmathfont{xits-math.otf}",
             # r"\setmainfont{DejaVu Serif}", # serif font via preamble
             ]
@@ -137,10 +137,10 @@ cable_loss = partial(loss_func, dc=par[0], sq=par[1], lin=par[2])
 #################################
 # Measurement results from Excel
 #################################
-# sim = "/mnt/home/documents/Design/pictures/vco_mpw2215/sf_20200209.vcsv" 
+sim = "/mnt/home/documents/Design/pictures/vco_mpw2215/sf_20200209.vcsv" 
 sim = "/home/zoltan/ccn/Design/pictures/vco_mpw2215/sf_20200209.vcsv" 
 # sim_cmos_60G = "/mnt/home/documents/Design/pictures/vco_mpw2215/cmos_60G_20200208.vcsv"
-# meas_dir = "/mnt/home/documents/Measurements/MPW2215_VCO/"
+meas_dir = "/mnt/home/documents/Measurements/MPW2215_VCO/"
 meas_dir = "/home/zoltan/ccn/Measurements/MPW2215_VCO/"
 meas_xlsx = meas_dir + "vco_cmos_60G_SF.xlsx"
 df_meas = pd.read_excel(meas_xlsx, usecols="B:H", sheet_name="combined", header=0).rename(columns={"IDD":"idd", "Pout":"pout", "Vtune":"vtune", "VDD":"vdd", "Ib":"ib", "Ibuf":"ibuf"})
@@ -226,7 +226,7 @@ for ext in ["png","pgf"]:
 # Output power
 ######################################
 # The differential output power is plotted
-fig_s,ax_s = plt.subplots(**plot_style)
+fig,axes = plt.subplots(nrows=3, sharex=True, **plot_style_3)
 
 pout_label = []
 cnt = 0
@@ -237,8 +237,8 @@ for cond in l_cond:
     dfs = df_sim[mask]
     assert dfm.ib.nunique()==1, "Multiple bias current values"
 
-    ax_s.plot(dfs.freq, dfs.pout, **style_sim)
-    ax_s.scatter(dfm.freq, dfm.pout, **l_style_meas[cnt], label=r"\SI{%.1f}{\volt} \SI{%d}{\mA}" % (cond["vdd"],cond["ib"])) 
+    axes[0].plot(dfs.freq, dfs.pout, **style_sim)
+    axes[0].scatter(dfm.freq, dfm.pout, **l_style_meas[cnt], label=r"\SI{%.1f}{\volt} \SI{%d}{\mA}" % (cond["vdd"],cond["ib"])) 
     cnt += 1
 
     p_avg = 10*np.log10(sum(10**(dfm.pout/10))/float(len(dfm.pout))) 
@@ -247,33 +247,29 @@ for cond in l_cond:
     pout_label.append("%.1f..%.1f; %.1f\,dBm" % (dfm.pout.min(), dfm.pout.max(), p_avg)   )
 
 
-ax_s.plot([],[],**style_sim, label="sim") # to add label
-ax_s.set_xlabel(r"Frequency $\left[ \si{\GHz} \right]$")
-ax_s.set_ylabel(r"P\textsubscript{out} $\left[ \si{\dBm} \right ]$")
-ax_s.set_xlim(45,65)
-ax_s.set_ylim(-22,0)
-ax_s.grid()
+axes[0].plot([],[],**style_sim, label="sim") # to add label
+axes[0].set_ylabel(r"P\textsubscript{out} $\left[ \si{\dBm} \right ]$")
+axes[0].set_xlim(45,65)
+axes[0].set_ylim(-22,0)
+axes[0].grid()
 
-handles, labels = ax_s.get_legend_handles_labels()
+handles, labels = axes[0].get_legend_handles_labels()
 # # checking order of the labels; DEBUG only
 # print(handles)
 # print(labels)
 handles = [*handles[1:], handles[0]]
 labels = [*labels[1:], labels[0]]
-leg = ax_s.legend(handles=handles, labels=labels, bbox_to_anchor=(0.16,1.0,0.86,0.04), **legend_style) 
-ax_s.legend(handles=handles[:len(handles)-1], labels=pout_label, **legend_style2_ncol2, bbox_to_anchor=(0,0,1,0.2), title="P\\textsubscript{out}: min-max; avg")
-ax_s.add_artist(leg)
-ax_s.annotate(r"V\textsubscript{DD} I\textsubscript{b}:",xy=(0,1.08),xycoords="axes fraction",fontsize=8)
-for ext in ["png","pgf"]:
-    fig_s.savefig(meas_dir + suffix + "_pout." + ext, bbox_inches='tight', pad_inches = 0)
+leg = axes[0].legend(handles=handles, labels=labels, bbox_to_anchor=(0.16,1.0,0.86,0.04), **legend_style) 
+axes[0].legend(handles=handles[:len(handles)-1], labels=pout_label, **legend_style2_ncol2, bbox_to_anchor=(0,-0.02,1,0.18), title="P\\textsubscript{out}: min-max; avg",labelspacing=0.3)
+axes[0].add_artist(leg)
+axes[0].annotate(r"V\textsubscript{DD} I\textsubscript{b}:",xy=(0,1.08),xycoords="axes fraction",fontsize=8)
+# for ext in ["png","pgf"]:
+#     fig_s.savefig(meas_dir + suffix + "_pout." + ext, bbox_inches='tight', pad_inches = 0)
 
 ######################################
 # Power consumption
 ######################################
 # The differential output power is plotted
-fig_s,ax_s = plt.subplots(**plot_style)
-fig_s2,ax_s2 = plt.subplots(**plot_style)
-
 pdc_label = []
 pdc_label2 = []
 cnt = 0
@@ -284,57 +280,30 @@ for cond in l_cond:
     dfs = df_sim[mask]
     assert dfm.ib.nunique()==1, "Multiple bias current values"
 
-    ax_s.plot(dfs.freq, dfs.pdc, **style_sim)
-    ax_s2.plot(dfs.freq, np.power(10,dfs.pdc/10), **style_sim)
+    axes[1].plot(dfs.freq, dfs.pdc, **style_sim)
     meas_pdc_mW = dfm.vdd * dfm.idd
     meas_pdc = 10*np.log10(meas_pdc_mW)
-    ax_s.scatter(dfm.freq, meas_pdc, **l_style_meas[cnt], label=r"\SI{%.1f}{\volt} \SI{%d}{\mA}" % (cond["vdd"],cond["ib"])) 
-    ax_s2.scatter(dfm.freq, meas_pdc_mW, **l_style_meas[cnt], label=r"\SI{%.1f}{\volt} \SI{%d}{\mA}" % (cond["vdd"],cond["ib"])) 
+    axes[1].scatter(dfm.freq, meas_pdc, **l_style_meas[cnt], label=r"\SI{%.1f}{\volt} \SI{%d}{\mA}" % (cond["vdd"],cond["ib"])) 
     cnt += 1
 
     # p_avg = 10*np.log10(sum(10**(dfm.pdc/10))/float(len(dfm.pdc))) 
     # pout_label.append(r"\SIrange[range-phrase=..]{%.1f}{%.1f}{}; \SI{%.1f}{\dBm}" % (dfm.pout.min(), dfm.pout.max(), p_avg)   )
     pdc_label.append("\SIrange{%.1f}{%.1f}{}; \SI{%.1f}{\dBm}" % (meas_pdc.min(), meas_pdc.max(), meas_pdc.mean())   )
-    pdc_label2.append("\SIrange{%.1f}{%.1f}{}; \SI{%.1f}{\mW}" % (meas_pdc_mW.min(), meas_pdc_mW.max(), meas_pdc_mW.mean())   )
 
 
-ax_s.plot([],[],**style_sim, label="sim") # to add label
-ax_s2.plot([],[],**style_sim, label="sim") # to add label
-ax_s.set_xlabel(r"Frequency $\left[ \si{\GHz} \right]$")
-ax_s.set_ylabel(r"P\textsubscript{DC} $\left [ \si{\dBm} \right ]$")
-ax_s.set_xlim(45,65)
-ax_s.set_ylim(0,11)
-ax_s.grid()
-ax_s2.set_xlabel(r"Frequency $\left[ \si{\GHz} \right]$")
-ax_s2.set_ylabel(r"P\textsubscript{DC} $\left [ \si{\mW} \right ]$")
-ax_s2.set_xlim(45,65)
-ax_s2.set_ylim(0,11)
-ax_s2.grid()
+axes[1].plot([],[],**style_sim, label="sim") # to add label
+axes[1].set_ylabel(r"P\textsubscript{DC} $\left [ \si{\dBm} \right ]$")
+axes[1].set_xlim(45,65)
+axes[1].set_ylim(0,11)
+axes[1].grid()
 
 handles, labels = ax_s.get_legend_handles_labels()
-# # checking order of the labels
-# print(handles)
-# print(labels)
-hand = [*handles[1:], handles[0]]
-lab = [*labels[1:], labels[0]]
-leg = ax_s.legend(handles=hand, labels=lab, bbox_to_anchor=(0.16,1.0,0.86,0.04), **legend_style) 
-ax_s.legend(handles=handles[1:], labels=pdc_label, **legend_style2_ncol2, bbox_to_anchor=(0,0,1,0.2), title="P\\textsubscript{out}: min-max; avg")
-ax_s.add_artist(leg)
-leg = ax_s2.legend(handles=hand, labels=lab, bbox_to_anchor=(0.16,1.0,0.86,0.04), **legend_style) 
-ax_s2.legend(handles=handles[1:], labels=pdc_label2, **legend_style2_ncol2, bbox_to_anchor=(0,0,1,0.2), title="P\\textsubscript{out}: min-max; avg")
-ax_s2.add_artist(leg)
-ax_s.annotate(r"V\textsubscript{DD} I\textsubscript{b}:",xy=(0,1.08),xycoords="axes fraction",fontsize=8)
-ax_s2.annotate(r"V\textsubscript{DD} I\textsubscript{b}:",xy=(0,1.08),xycoords="axes fraction",fontsize=8)
-for ext in ["png","pgf"]:
-    fig_s.savefig(meas_dir + suffix + "_pdc." + ext, bbox_inches='tight', pad_inches = 0)
-    fig_s2.savefig(meas_dir + suffix + "_pdc_mW." + ext, bbox_inches='tight', pad_inches = 0)
+axes[1].legend(handles=handles[1:], labels=pdc_label, **legend_style2_ncol2, bbox_to_anchor=(0,-0.02,1,0.2), title="P\\textsubscript{out}: min-max; avg", labelspacing=0.3)
+# ax[1].add_artist(leg)
 
 ######################################
 # DC to RF efficiency
 ######################################
-# l_eff = [eff(p_out[i], VDD, IDD[i], in_dBm=True) for i in range(len(p_out))]
-fig_s,ax_s = plt.subplots(**plot_style)
-ax_s.plot([],[],**style_sim, label="sim") # to add label
 eff_label = []
 cnt = 0
 for cond in l_cond:
@@ -343,32 +312,23 @@ for cond in l_cond:
     mask = pd.DataFrame([df_sim[key] == val for key, val in cond.items()]).T.all(axis=1)
     dfs = df_sim[mask]
     assert dfm.ib.nunique()==1, "Multiple bias current values"
-    ax_s.plot(dfs.freq, dfs.eff,**style_sim)
-    ax_s.scatter(dfm.freq, dfm.eff, **l_style_meas[cnt], label=r"\SI{%.1f}{\volt} \SI{%d}{\mA}" % (cond["vdd"],cond["ib"])) 
+    axes[2].plot(dfs.freq, dfs.eff,**style_sim)
+    axes[2].scatter(dfm.freq, dfm.eff, **l_style_meas[cnt], label=r"\SI{%.1f}{\volt} \SI{%d}{\mA}" % (cond["vdd"],cond["ib"])) 
     cnt +=1
     
     eff_min, eff_max, eff_mean = dfm.eff.min(), dfm.eff.max(), dfm.eff.mean()
     eff_label.append("%.1f-%.1f%%; %.1f%%" % (eff_min, eff_max, eff_mean))
 
-ax_s.set_xlabel(r"Frequency $\left[\si{\GHz} \right ]$")
-ax_s.set_ylabel(r"${\eta  \left[ \si{\percent} \right] }$")
-ax_s.set_ylim(0,9)
-ax_s.set_xlim(45,65)
-# ax_s.set_ylabel("eff [%]")
-ax_s.grid()
+axes[2].set_xlabel(r"Frequency $\left[\si{\GHz} \right ]$")
+axes[2].set_ylabel(r"${\eta  \left[ \si{\percent} \right] }$")
+axes[2].set_ylim(0,9)
+axes[2].set_xlim(45,65)
+# axes[2].set_ylabel("eff [%]")
+axes[2].grid()
 
 handles, labels = ax_s.get_legend_handles_labels()
-# # checking order of the labels
-# print(handles)
-# print(labels)
-# label_order = [1, 2, 3, 4, 0]
-# handles = [handles[i] for i in label_order]
-# labels  = [labels[i]  for i in label_order]
-new_handles = [*handles[1:], handles[0]]
-new_labels  = [*labels[1:], labels[0]]
-leg = ax_s.legend(handles=new_handles, labels=new_labels, bbox_to_anchor=(0.16,1.0,0.86,0.04), **legend_style) 
-ax_s.legend(handles=handles[1:], labels=eff_label, **legend_style2_ncol2_ul, bbox_to_anchor=(0.0,0.62,0.8,0.4), title="$\eta$: min-max; avg")
-ax_s.add_artist(leg)
-ax_s.annotate(r"V\textsubscript{DD} I\textsubscript{b}:",xy=(0,1.08),xycoords="axes fraction",fontsize=8)
+axes[2].legend(handles=handles[1:], labels=eff_label, **legend_style2_ncol2_ul, bbox_to_anchor=(0.0,0.63,0.8,0.4), title="$\eta$: min-max; avg", labelspacing=0.3)
+
+fig.subplots_adjust(hspace=0.1)
 for ext in ["png","pgf"]:
-    fig_s.savefig(meas_dir + suffix + "_eff." + ext, bbox_inches='tight', pad_inches = 0)
+    fig.savefig(meas_dir + suffix + "_pout_pdc_eff." + ext, bbox_inches='tight', pad_inches = 0)

@@ -27,16 +27,18 @@ if latex:
         "xtick.labelsize": 8,
         "ytick.labelsize": 8,
         "pgf.preamble": [
-            "\\usepackage{siunitx}",         # load additional packages
-            "\\usepackage{amsmath}",         # load additional packages
-            "\\usepackage{metalogo}",
-            "\\usepackage{unicode-math}",  # unicode math setup
+            r"\usepackage{siunitx}",     
+            r"\usepackage{amsmath}",      
+            r"\usepackage{metalogo}",
+            r"\usepackage{unicode-math}",  
+            # r"\usepackage{mathspec}",  
+            # r"\usepackage{fontspec}",  
             r"\DeclareSIUnit{\Bm}{Bm}",
             r"\DeclareSIUnit{\dBm}{\deci\Bm}",
             r"\sisetup{detect-weight=true, detect-family=true, per-mode=fraction, fraction-function=\tfrac,range-phrase=--, range-units=single}",
             r"\newcommand{\da}{\textsuperscript{$\dagger$}}"
-            r"\setmathfont{xits-math.otf}",
-            r"\setmainfont{DejaVu Serif}", # serif font via preamble
+            # r"\setmathfont{xits-math.otf}",
+            # r"\setmainfont{DejaVu Serif}", # serif font via preamble
             ]
     }
     matplotlib.rcParams.update(pgf_with_custom_preamble)
@@ -91,7 +93,7 @@ ax2.arrow(80,0.52,5,0,head_width=0.07, head_length=1,lw=0.4, alpha=0.7,zorder=10
 ax2.plot([80,80],[0.62,0.52], c="black", alpha=0.8,lw=0.6)
 
 ax.grid()
-ax.set_xlabel(r"Resonator capacitance $\left[\si{\fF}\right]$",labelpad=0)
+ax.set_xlabel(r"Resonator capacitance $\left [ \si{\femto\farad} \right ]$",labelpad=0)
 ax.set_ylabel(r"Frequency $\left[\si{\GHz}\right]$", labelpad=2)
 ax2.set_ylabel(r"Difference $\left[\si{\percent}\right]$", labelpad=3)
 ax.set_ylim(40,70)
@@ -100,6 +102,6 @@ ax.set_xlim(40,100)
 ax.legend(frameon=False, fontsize=7, handlelength=1, loc="upper right")
 
 for ext in ["png","pgf"]:
-    fig.savefig("tl_vs_lc." + ext, bbox_inches='tight', pad_inches = 0)
+    fig.savefig("tl_vs_lc." + ext, bbox_inches='tight', pad_inches = 0, dpi=600)
 
 
