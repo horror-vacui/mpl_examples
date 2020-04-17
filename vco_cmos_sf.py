@@ -31,12 +31,13 @@ style_meas4 = {"linestyle":"-", "edgecolor":None,"facecolor":"purple", "s":20, "
 legend_style = {"frameon":False, "fontsize":7, "handletextpad":0.4, "borderaxespad":0, "ncol":3, "loc":'lower center', "mode":"expand", "handlelength":2}
 legend_style2 = {"frameon":False, "fontsize":7, "handletextpad":0.4, "borderaxespad":0, "ncol":1, "loc":'lower center', "mode":"expand", "handlelength":2}
 legend_style2_ncol2 = {"frameon":False, "fontsize":7, "handletextpad":0.4, "borderaxespad":0, "ncol":2, "loc":'lower center', "mode":"expand", "handlelength":2}
-legend_style2_ncol2_ul = {"frameon":False, "fontsize":7, "handletextpad":0.4, "borderaxespad":0, "ncol":2, "loc":'upper left', "mode":"expand", "handlelength":2}
+legend_style2_ncol2_ul = {"frameon":False, "fontsize":7, "handletextpad":0.4, "borderaxespad":0, "ncol":2, "loc":'upper left', "mode":"expand", "handlelength":0.6}
 
 l_style_meas = [style_meas1, style_meas2, style_meas3, style_meas4]
 
-plot_style = {"figsize":(3.3914487339144874, 2.0960305886619515*0.85)}
+plot_style = {"figsize":(3.3914487339144874, 2.0960305886619515*0.7)}
 
+xlabel = {"xlabel":r"Frequency $\left[\si{\GHz}\right]$", "labelpad":0}
 opt_vcsv = {'header':None, 'skiprows':6, 'dtype':np.float64, 'usecols':[0,1,3,7],'names':['vtune','freq','pout','pdc']} 
 
 def eff(pout, vdc, idc, in_dBm=False):
@@ -206,7 +207,7 @@ for cond in l_cond:
 ax_s.plot([],[],**style_sim, label="sim") # to add label
 ax_s.set_xlim(-0.5, 1.6)
 ax_s.set_ylim(45, None)
-ax_s.set_xlabel(r"Tuning voltage $\left[\si{\volt}\right]$")
+ax_s.set_xlabel(r"Tuning voltage $\left[\si{\volt}\right]$", labelpad=0)
 ax_s.set_ylabel(r"Frequency $\left [ \si{\GHz} \right ]$")
 ax_s.grid()
 handles, labels = ax_s.get_legend_handles_labels()
@@ -216,7 +217,7 @@ handles, labels = ax_s.get_legend_handles_labels()
 hand = [*handles[1:], handles[0]]
 lab = [*labels[1:], labels[0]]
 leg = ax_s.legend(handles=hand, labels=lab, bbox_to_anchor=(0.16,1.0,0.86,0.04), **legend_style) 
-ax_s.legend(handles=handles[1:], labels=tr_label, **legend_style2, bbox_to_anchor=(0.55,0.02,0.4,0.2), title="Tuning range")
+ax_s.legend(handles=handles[1:], labels=tr_label, **legend_style2, bbox_to_anchor=(0.55,0.02,0.4,0.2), title="Tuning range", labelspacing=0.3)
 ax_s.add_artist(leg)
 ax_s.annotate(r"V\textsubscript{DD} I\textsubscript{b}:",xy=(0,1.08),xycoords="axes fraction",fontsize=8)
 for ext in ["png","pgf"]:
@@ -248,7 +249,7 @@ for cond in l_cond:
 
 
 ax_s.plot([],[],**style_sim, label="sim") # to add label
-ax_s.set_xlabel(r"Frequency $\left[ \si{\GHz} \right]$")
+ax_s.set_xlabel(**xlabel)
 ax_s.set_ylabel(r"P\textsubscript{out} $\left[ \si{\dBm} \right ]$")
 ax_s.set_xlim(45,65)
 ax_s.set_ylim(-22,0)
@@ -261,7 +262,7 @@ handles, labels = ax_s.get_legend_handles_labels()
 handles = [*handles[1:], handles[0]]
 labels = [*labels[1:], labels[0]]
 leg = ax_s.legend(handles=handles, labels=labels, bbox_to_anchor=(0.16,1.0,0.86,0.04), **legend_style) 
-ax_s.legend(handles=handles[:len(handles)-1], labels=pout_label, **legend_style2_ncol2, bbox_to_anchor=(0,0,1,0.2), title="P\\textsubscript{out}: min-max; avg")
+ax_s.legend(handles=handles[:len(handles)-1], labels=pout_label, **legend_style2_ncol2, bbox_to_anchor=(0,-0.02,1,0.2), title="P\\textsubscript{out}: min-max; avg", labelspacing=0.3)
 ax_s.add_artist(leg)
 ax_s.annotate(r"V\textsubscript{DD} I\textsubscript{b}:",xy=(0,1.08),xycoords="axes fraction",fontsize=8)
 for ext in ["png","pgf"]:
@@ -300,12 +301,12 @@ for cond in l_cond:
 
 ax_s.plot([],[],**style_sim, label="sim") # to add label
 ax_s2.plot([],[],**style_sim, label="sim") # to add label
-ax_s.set_xlabel(r"Frequency $\left[ \si{\GHz} \right]$")
+ax_s.set_xlabel(**xlabel)
 ax_s.set_ylabel(r"P\textsubscript{DC} $\left [ \si{\dBm} \right ]$")
 ax_s.set_xlim(45,65)
 ax_s.set_ylim(0,11)
 ax_s.grid()
-ax_s2.set_xlabel(r"Frequency $\left[ \si{\GHz} \right]$")
+ax_s2.set_xlabel(**xlabel)
 ax_s2.set_ylabel(r"P\textsubscript{DC} $\left [ \si{\mW} \right ]$")
 ax_s2.set_xlim(45,65)
 ax_s2.set_ylim(0,11)
@@ -318,10 +319,10 @@ handles, labels = ax_s.get_legend_handles_labels()
 hand = [*handles[1:], handles[0]]
 lab = [*labels[1:], labels[0]]
 leg = ax_s.legend(handles=hand, labels=lab, bbox_to_anchor=(0.16,1.0,0.86,0.04), **legend_style) 
-ax_s.legend(handles=handles[1:], labels=pdc_label, **legend_style2_ncol2, bbox_to_anchor=(0,0,1,0.2), title="P\\textsubscript{out}: min-max; avg")
+ax_s.legend(handles=handles[1:], labels=pdc_label, **legend_style2_ncol2, bbox_to_anchor=(0,-0.02,1,0.2), title="P\\textsubscript{DC}: min-max; avg", labelspacing=0.3)
 ax_s.add_artist(leg)
 leg = ax_s2.legend(handles=hand, labels=lab, bbox_to_anchor=(0.16,1.0,0.86,0.04), **legend_style) 
-ax_s2.legend(handles=handles[1:], labels=pdc_label2, **legend_style2_ncol2, bbox_to_anchor=(0,0,1,0.2), title="P\\textsubscript{out}: min-max; avg")
+ax_s2.legend(handles=handles[1:], labels=pdc_label2, **legend_style2_ncol2, bbox_to_anchor=(0,-0.02,1,0.2), title="P\\textsubscript{DC}: min-max; avg", labelspacing=0.3)
 ax_s2.add_artist(leg)
 ax_s.annotate(r"V\textsubscript{DD} I\textsubscript{b}:",xy=(0,1.08),xycoords="axes fraction",fontsize=8)
 ax_s2.annotate(r"V\textsubscript{DD} I\textsubscript{b}:",xy=(0,1.08),xycoords="axes fraction",fontsize=8)
@@ -350,10 +351,11 @@ for cond in l_cond:
     eff_min, eff_max, eff_mean = dfm.eff.min(), dfm.eff.max(), dfm.eff.mean()
     eff_label.append("%.1f-%.1f%%; %.1f%%" % (eff_min, eff_max, eff_mean))
 
-ax_s.set_xlabel(r"Frequency $\left[\si{\GHz} \right ]$")
+ax_s.set_xlabel(**xlabel)
 ax_s.set_ylabel(r"${\eta  \left[ \si{\percent} \right] }$")
-ax_s.set_ylim(0,9)
+ax_s.set_ylim(1,8)
 ax_s.set_xlim(45,65)
+ax_s.yaxis.set_major_locator(matplotlib.ticker.MultipleLocator(1))
 # ax_s.set_ylabel("eff [%]")
 ax_s.grid()
 
@@ -367,7 +369,7 @@ handles, labels = ax_s.get_legend_handles_labels()
 new_handles = [*handles[1:], handles[0]]
 new_labels  = [*labels[1:], labels[0]]
 leg = ax_s.legend(handles=new_handles, labels=new_labels, bbox_to_anchor=(0.16,1.0,0.86,0.04), **legend_style) 
-ax_s.legend(handles=handles[1:], labels=eff_label, **legend_style2_ncol2_ul, bbox_to_anchor=(0.0,0.62,0.8,0.4), title="$\eta$: min-max; avg")
+ax_s.legend(handles=handles[1:], labels=eff_label, **legend_style2_ncol2_ul, bbox_to_anchor=(0.02,0.62,0.7,0.4), title="$\eta$: min-max; avg", labelspacing=0.3)
 ax_s.add_artist(leg)
 ax_s.annotate(r"V\textsubscript{DD} I\textsubscript{b}:",xy=(0,1.08),xycoords="axes fraction",fontsize=8)
 for ext in ["png","pgf"]:
