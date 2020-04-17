@@ -298,7 +298,7 @@ axes[1].set_ylim(0,11)
 axes[1].grid()
 
 handles, labels = ax_s.get_legend_handles_labels()
-axes[1].legend(handles=handles[1:], labels=pdc_label, **legend_style2_ncol2, bbox_to_anchor=(0,-0.02,1,0.2), title="P\\textsubscript{out}: min-max; avg", labelspacing=0.3)
+axes[1].legend(handles=handles[1:], labels=pdc_label, **legend_style2_ncol2, bbox_to_anchor=(0,-0.02,1,0.2), title="P\\textsubscript{DC}: min-max; avg", labelspacing=0.3)
 # ax[1].add_artist(leg)
 
 ######################################
