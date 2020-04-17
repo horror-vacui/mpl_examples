@@ -20,8 +20,10 @@ annotate_vdd = False
 # style_sim  = {"linestyle":"--", "color":"grey", "marker":"None", "label":"sim"} # for plot
 style_sim  = {"linestyle":"--", "color":"grey", "marker":"None", "label":"simulation"} # for plot
 
-pn_dir = "/mnt/home/documents/Measurements/MPW2215_VCO/Phase_noise/"
-pn_sim_dir = "/mnt/home/documents/Design/pictures/vco_mpw2215/"
+# pn_dir = "/mnt/home/documents/Measurements/MPW2215_VCO/Phase_noise/"
+# pn_sim_dir = "/mnt/home/documents/Design/pictures/vco_mpw2215/"
+pn_dir      = "/home/zoltan/ccn/Measurements/MPW2215_VCO/Phase_noise/"
+pn_sim_dir  = "/home/zoltan/ccn/Measurements/MPW2215_VCO/sim/"
 if my_circuit == "cmos_60G_sf":
     # re_pn = re.compile("(?P<circuit>.*)_set_values_vtune(?P<vtune>[0-9]+(.[0-9]+)?)V_vdd(?P<vdd>[0-9]p[0-9])V_ib(?P<ib>[0-9])mA_ibuf(?P<ibuf>[0-9]+)uA(?P<note>.*)") # older meas
     re_pn = re.compile("(?P<circuit>.*)_vtune(?P<vtune>[0-9]+(.[0-9]+)?)V_vdd(?P<vdd>[0-9]p[0-9])V_ib(?P<ib>[0-9])mA_ibuf(?P<ibuf>[0-9]+)uA(?P<note>.*)")
@@ -47,7 +49,7 @@ logger.addHandler(ch)
 d_sim = {'nmos_60G_sf':{ 'f_sim'     : 'nmos_sf_pn_all_supply_10mA_cc_only.vcsv',
                          'vcsv_cols' : {'0p8':1,'1p0':3,'1p2':5}  
                          }, # nmos_60G_sf
-        'cmos_60G_sf':{ 'f_sim'     : 'cmos_sf_pn_3mA_275uA_allsupply.vcsv',
+        'cmos_60G_sf':{  'f_sim'     : 'cmos__sf_pn_allsupply_20200417.vcsv',
                          'vcsv_cols' : {'0p8':1,'1p0':3,'1p2':5,'1p4':7}
                          }, # cmos_60G_sf
         'cmos_tl270u_60G':{ 'f_sim'     : 'cmos_tl270u_pn_all_supply_4mA.vcsv',
@@ -86,8 +88,8 @@ if latex:
             r"\DeclareSIUnit{\dBc}{dBc}",
             r"\DeclareSIUnit[per-mode=symbol]{\dBcHz}{\dBc\per\Hz}",
             r"\newcommand{\da}{\textsuperscript{$\dagger$}}"
-            r"\setmathfont{xits-math.otf}",
-            r"\setmainfont{DejaVu Serif}", # serif font via preamble
+            # r"\setmathfont{xits-math.otf}",
+            # r"\setmainfont{DejaVu Serif}", # serif font via preamble
             ]
     }
     matplotlib.rcParams.update(pgf_with_custom_preamble)
@@ -108,7 +110,7 @@ logger.info('Available measurement results: ' + ", ".join(l_vdd))
 l_vdd_sim = [ i.replace('.','p') for i in d_sim.get(my_circuit).get('vcsv_cols').keys()]
 
 for my_vdd in set().union(l_vdd, l_vdd_sim):    
-    fig, ax = plt.subplots(figsize=(3.3914487339144874, 2.0960305886619515*0.85))
+    fig, ax = plt.subplots(figsize=(3.3914487339144874, 2.0960305886619515*0.8))
     # plotting the sim
     logger.info("VDD=" + my_vdd + " is being processed")
     if my_vdd in l_vdd_sim: # and False:
@@ -127,7 +129,7 @@ for my_vdd in set().union(l_vdd, l_vdd_sim):
         # ax.scatter(x,pn10, marker='o',color=style_sim.get("color"),s=20)
 
         x,pn1 = df_sim[df_sim.f==1].values[0]
-        ax.text(x-0.7,pn1-7,"$\SI{%.0f}{\dBcHz}" % pn1, fontsize=7, color=style_sim.get("color"))
+        ax.text(x-0.73,pn1-9,"$\SI{%.1f}{\dBcHz}" % pn1, fontsize=7, color=style_sim.get("color"))
         ax.scatter(x,pn1, marker='o',color=style_sim.get("color"),s=20)
 
         if annotate_vdd:
@@ -181,7 +183,7 @@ for my_vdd in set().union(l_vdd, l_vdd_sim):
             
             func = interp1d(df_avg.f, df_avg.pn, kind='cubic')
             x,pn1 = 1,func(1)
-            ax.text(x-0.1, pn1+5,"$\SI{%.0f}{\dBcHz}" % pn1, fontsize=7)
+            ax.text(x-0.1, pn1+5,"$\SI{%.1f}{\dBcHz}" % pn1, fontsize=7)
             ax.scatter(x,pn1, marker='o',color='k',s=20)
 
 
