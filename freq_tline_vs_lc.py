@@ -19,13 +19,13 @@ if latex:
         "pgf.rcfonts": False,   # don't setup fonts from rc parameters
         # Use 10pt font in plots, to match 10pt font in document
         # "axes.labelsize": 10,
-        "axes.labelsize": 8,
-        "font.size": 10,
+        "axes.labelsize": 7,
+        "font.size": 9,
         # Make the legend/label fonts a little smaller
-        "legend.fontsize": 8,
-        "legend.title_fontsize": 8,
-        "xtick.labelsize": 8,
-        "ytick.labelsize": 8,
+        "legend.fontsize": 7,
+        "legend.title_fontsize": 7,
+        "xtick.labelsize": 7,
+        "ytick.labelsize": 7,
         "pgf.preamble": [
             r"\usepackage{siunitx}",     
             r"\usepackage{amsmath}",      
@@ -43,6 +43,10 @@ if latex:
     }
     matplotlib.rcParams.update(pgf_with_custom_preamble)
     matplotlib.rcParams['lines.markersize'] = 4
+#-----------------------------------------------------------
+
+
+legend_style = {"frameon":False, "fontsize":6, "handletextpad":0.4, "borderaxespad":0, "ncol":2, "loc":'lower center', "mode":"expand", "handlelength":1, "bbox_to_anchor":(-0.2,1,1.4,0.04)}
 
 # Approximateion of implicit frequency equation with t-line. 3rd order Maclaurin series. # not used in this version, though error was not noticable on the plots
 def fosc(eps, Z0, C, l):
@@ -72,34 +76,41 @@ L = 124e-12*1.05
 # for i in x:
 #     print("%.1f pF\t %.1f GHz\t%.1f GHz" % (i*1e15, fosc(eps=e, Z0=Z0, l=l, C=2*i)*1e-9, f_lc(L,i)*1e-9))
 
-fig, ax = plt.subplots(figsize=(3.3914487339144874, 2.0960305886619515*2/3))
+fig, ax = plt.subplots(figsize=(3.3914487339144874*0.5*0.85, 2.0960305886619515*4/8*0.85))
 ax2 = ax.twinx()
 
 y_lc = np.array([f_lc(L,i)*1e-9 for i in x])
 ax.plot(x*1e15,y_lc, label="lumped LC", color="green" )
 
 y_tline = np.array([sym.nsolve(1/(2*pi*2*i*Z0*sym.tan(pi*l/speed_of_light *f*2*sym.sqrt(e))) - f,f,55e9)*1e-9 for i in x])
-ax.plot(x*1e15, y_tline, label="Transmission line", color="purple" )
+ax.plot(x*1e15, y_tline, label="T-line", color="purple" )
 
 y_er = (y_lc - y_tline)/y_tline*100 
 ax2.plot(x*1e15, y_er, color="grey", linestyle="--",zorder=2, label="difference")
 
 ax.add_artist(mpatches.Ellipse((60,56.6),1.5,3,edgecolor="black",facecolor='none', alpha=0.8, lw=0.5,zorder=2))
 ax.plot([60,60],[55.1,53], c="black", alpha=0.8,lw=0.5,zorder=4)
-ax.arrow(60,53,-5,0,head_width=1, head_length=1,lw=0.5, alpha=0.7,facecolor="black",zorder=4)
+ax.arrow(60,53,-5,0,head_width=1.51, head_length=1,lw=0.5, alpha=0.7,facecolor="black",zorder=4)
 
 ax2.add_artist(mpatches.Ellipse((80,0.73),1.5,0.22,edgecolor="black",facecolor='none', alpha=0.8,zorder=2, lw=0.6))
-ax2.arrow(80,0.52,5,0,head_width=0.07, head_length=1,lw=0.4, alpha=0.7,zorder=10,fc="black", ec="black")
+ax2.arrow(80,0.52,5,0,head_width=0.1, head_length=1,lw=0.4, alpha=0.7,zorder=10,fc="black", ec="black")
 ax2.plot([80,80],[0.62,0.52], c="black", alpha=0.8,lw=0.6)
 
 ax.grid()
+ax.tick_params(pad=2, length=1.5, direction="in", axis="y")
+ax2.tick_params(pad=1, length=1.5, direction="in", axis="y")
+ax.tick_params(length=1.5, direction="in", axis="x")
 ax.set_xlabel(r"Resonator capacitance $\left [ \si{\femto\farad} \right ]$",labelpad=0)
-ax.set_ylabel(r"Frequency $\left[\si{\GHz}\right]$", labelpad=2)
-ax2.set_ylabel(r"Difference $\left[\si{\percent}\right]$", labelpad=3)
+ax.set_ylabel(r"Frequency $\left[\si{\GHz}\right]$", labelpad=1)
+ax2.set_ylabel(r"Difference $\left[\si{\percent}\right]$", labelpad=1)
 ax.set_ylim(40,70)
 ax2.set_ylim(0.25,2.25)
 ax.set_xlim(40,100)
-ax.legend(frameon=False, fontsize=7, handlelength=1, loc="upper right")
+ax.legend(frameon=False, fontsize=7, handlelength=0.8, handletextpad=0.35, labelspacing=0.3, bbox_to_anchor=(-0.05,1,1.1,0.04), ncol=2, loc='lower center', borderaxespad=0, mode='expand')
+
+ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(10))
+ax.yaxis.set_major_locator(matplotlib.ticker.MultipleLocator(5))
+ax2.yaxis.set_major_locator(matplotlib.ticker.MultipleLocator(0.5))
 
 for ext in ["png","pgf"]:
     fig.savefig("tl_vs_lc." + ext, bbox_inches='tight', pad_inches = 0, dpi=600)
