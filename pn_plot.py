@@ -14,16 +14,16 @@ my_circuit =  "cmos_60G_sf"
 w_dac = False
 w_short = True
 do_show_all =False
-# annotate_vdd = True
-annotate_vdd = False
+annotate_vdd = True
+# annotate_vdd = False
 
 # style_sim  = {"linestyle":"--", "color":"grey", "marker":"None", "label":"sim"} # for plot
 style_sim  = {"linestyle":"--", "color":"grey", "marker":"None", "label":"simulation"} # for plot
 
-# pn_dir = "/mnt/home/documents/Measurements/MPW2215_VCO/Phase_noise/"
-# pn_sim_dir = "/mnt/home/documents/Design/pictures/vco_mpw2215/"
-pn_dir      = "/home/zoltan/ccn/Measurements/MPW2215_VCO/Phase_noise/"
-pn_sim_dir  = "/home/zoltan/ccn/Measurements/MPW2215_VCO/sim/"
+pn_dir = "/mnt/home/documents/Measurements/MPW2215_VCO/Phase_noise/"
+pn_sim_dir = "/mnt/home/documents/Design/pictures/vco_mpw2215/"
+# pn_dir      = "/home/zoltan/ccn/Measurements/MPW2215_VCO/Phase_noise/"
+# pn_sim_dir  = "/home/zoltan/ccn/Measurements/MPW2215_VCO/sim/"
 if my_circuit == "cmos_60G_sf":
     # re_pn = re.compile("(?P<circuit>.*)_set_values_vtune(?P<vtune>[0-9]+(.[0-9]+)?)V_vdd(?P<vdd>[0-9]p[0-9])V_ib(?P<ib>[0-9])mA_ibuf(?P<ibuf>[0-9]+)uA(?P<note>.*)") # older meas
     re_pn = re.compile("(?P<circuit>.*)_vtune(?P<vtune>[0-9]+(.[0-9]+)?)V_vdd(?P<vdd>[0-9]p[0-9])V_ib(?P<ib>[0-9])mA_ibuf(?P<ibuf>[0-9]+)uA(?P<note>.*)")
@@ -132,9 +132,9 @@ for my_vdd in set().union(l_vdd, l_vdd_sim):
         ax.text(x-0.73,pn1-9,"$\SI{%.1f}{\dBcHz}" % pn1, fontsize=7, color=style_sim.get("color"))
         ax.scatter(x,pn1, marker='o',color=style_sim.get("color"),s=20)
 
-        if annotate_vdd:
-            ax.annotate(r"\SI{"+my_vdd.replace('p','.')+r"}{\volt}", xycoords="axes fraction", xy=(0.1,0.1), fontsize=7)
-            ax.annotate(my_circuit, xycoords="axes fraction", xy=(0.1,0.9), fontsize=7)
+        # if annotate_vdd:
+            # ax.annotate(r"V\textsubscript{DD} = \SI{"+my_vdd.replace('p','.')+r"}{\volt}", xycoords="axes fraction", xy=(0.1,0.1), fontsize=7)
+            # ax.annotate(my_circuit, xycoords="axes fraction", xy=(0.1,0.9), fontsize=7)
 
     if my_vdd in l_vdd: # and my_vdd == "0p8":
         df_avg = pd.DataFrame()
@@ -171,15 +171,16 @@ for my_vdd in set().union(l_vdd, l_vdd_sim):
 
 
         if annotate_vdd:
-            ax.annotate(r"\SI{" + my_vdd.replace('p','.') +r"}{\volt}", xycoords="axes fraction", xy=(0.1,0.1), fontsize=7)
-            ax.annotate(my_circuit, xycoords="axes fraction", xy=(0.1,0.9), fontsize=7)
+            ax.annotate(r"V\textsubscript{DD} = \SI{"+my_vdd.replace('p','.')+r"}{\volt}", xycoords="axes fraction", xy=(0.01,0.05), fontsize=7)
+            # ax.annotate(r"\SI{" + my_vdd.replace('p','.') +r"}{\volt}", xycoords="axes fraction", xy=(0.1,0.1), fontsize=7)
+            # ax.annotate(my_circuit, xycoords="axes fraction", xy=(0.1,0.9), fontsize=7)
 
 
         if not do_show_all:
             df_avg = pd.concat(l_df).groupby(level=0).mean().sort_values(by=['f'])
             df_avg.to_csv(file_basename + ".csv", index=False )
 
-            ax.plot(df_avg.f, df_avg.pn, color="k") # , label="meas" )
+            ax.plot(df_avg.f, df_avg.pn, color="k", label="avg. meas" )
             
             func = interp1d(df_avg.f, df_avg.pn, kind='cubic')
             x,pn1 = 1,func(1)
@@ -209,7 +210,7 @@ for my_vdd in set().union(l_vdd, l_vdd_sim):
     for ext in [".pgf",".png"]:
     # for ext in [".png"]:
         file_basename = pn_dir + "%s_%sV_pn" % (my_circuit, my_vdd)
-        fig.savefig(file_basename + suffix + ext, bbox_inches="tight", dpi=600)
+        fig.savefig(file_basename + suffix + ext, bbox_inches="tight", pad_inches=0, dpi=600)
 
 plt.show()
 
